@@ -11,18 +11,27 @@ function cleanUpGamesAndPlayers(){
 }
 
 function getRandomLocation(){
-  var locationIndex = Math.floor(Math.random() * locations.length);
-  return locations[locationIndex];
+  return Random.choice(locations);
 }
 
+// Code shamelessly stolen from StackOverflow (http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array)
 function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-    return array;
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+	  randomIndex = Math.floor(Random.fraction() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
 
 function assignRoles(players, location){
@@ -68,8 +77,8 @@ Games.find({"state": 'settingUp'}).observeChanges({
     var players = Players.find({gameID: id});
     var gameEndTime = moment().add(game.lengthInMinutes, 'minutes').valueOf();
 
-    var spyIndex = Math.floor(Math.random() * players.count());
-    var firstPlayerIndex = Math.floor(Math.random() * players.count());
+	  var spyIndex = Math.floor(Random.fraction() * players.count());
+	  var firstPlayerIndex = Math.floor(Random.fraction() * players.count());
 
     players.forEach(function(player, index){
       Players.update(player._id, {$set: {
